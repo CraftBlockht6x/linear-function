@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5">
+    <title>一次函数图像绘制</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f0f0f0;
+        }
+        canvas {
+            border: 1px solid #000;
+            background: #fff;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="graph" width="600" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('graph');
+        const ctx = canvas.getContext('2d');
+        
+        const width = canvas.width;
+        const height = canvas.height;
+        const margin = 40;
+        const gridStep = 20;
+        const k = 1; // k值
+        let b = 0; // b值
+        b *= 20;
+        
+        // 绘制坐标轴
+        function drawAxes() {
+            ctx.strokeStyle = '#000';
+            ctx.beginPath();
+            ctx.moveTo(margin, height / 2);
+            ctx.lineTo(width - margin, height / 2);
+            ctx.moveTo(width / 2, margin);
+            ctx.lineTo(width / 2, height - margin);
+            ctx.stroke();
+        }
+        
+        // 绘制网格线
+        function drawGrid() {
+            ctx.strokeStyle = '#ddd';
+            ctx.lineWidth = 0.5;
+        
+            // 水平网格线
+            for (let y = margin; y < height - margin; y += gridStep) {
+                ctx.beginPath();
+                ctx.moveTo(margin, y);
+                ctx.lineTo(width - margin, y);
+                ctx.stroke();
+            }
+        
+            // 垂直网格线
+            for (let x = margin; x < width - margin; x += gridStep) {
+                ctx.beginPath();
+                ctx.moveTo(x, margin);
+                ctx.lineTo(x, height - margin);
+                ctx.stroke();
+            }
+        }
+        
+        // 绘制函数图像
+        function drawFunction() {
+            ctx.strokeStyle = '#f00';
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath();
+            let startX = -width / 2;
+            let startY = k * startX + b;
+            let startScreenX = startX + width / 2;
+            let startScreenY = -startY + height / 2;
+            
+            ctx.moveTo(startScreenX, startScreenY);
+        
+            for (let x = startX + 1; x < width / 2; x += 1) {
+                const screenX = x + width / 2;
+                const screenY = -k * x - b + height / 2;
+                ctx.lineTo(screenX, screenY);
+            }
+            
+            ctx.stroke();
+        }
+        
+        // 绘制坐标刻度
+        function drawScales() {
+            ctx.strokeStyle = '#000';
+            ctx.fillStyle = '#000';
+            ctx.font = '10px Arial';
+        
+            // 纵坐标刻度
+            for (let y = margin; y < height - margin; y += gridStep) {
+                ctx.beginPath();
+                ctx.moveTo(width / 2 - 5, y);
+                ctx.lineTo(width / 2 + 5, y);
+                ctx.stroke();
+                const label = Math.round((height / 2 - y) / gridStep);
+                ctx.fillText(label, width / 2 + 10, y + 3);
+            }
+        
+            // 横坐标刻度
+            for (let x = margin; x < width - margin; x += gridStep) {
+                ctx.beginPath();
+                ctx.moveTo(x, height / 2 - 5);
+                ctx.lineTo(x, height / 2 + 5);
+                ctx.stroke();
+                const label = Math.round((x - width / 2) / gridStep);
+                ctx.fillText(label, x + 2, height / 2 + 20);
+            }
+        }
+        
+        function drawGraph() {
+            ctx.clearRect(0, 0, width, height);
+            drawGrid();
+            drawAxes();
+            drawFunction();
+            drawScales();
+        }
+        
+        drawGraph();
+        
+    </script>
+</body>
+
+</html>
